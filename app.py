@@ -5,7 +5,7 @@ import pandas as pd
 # Configuración de la página
 st.set_page_config(
     page_title="Solver Lineal Pro | Álgebra Lineal",
-    page_icon="📐",
+    page_icon=":v",
     layout="wide"
 )
 
@@ -26,12 +26,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("📐 Calculadora Avanzada de Álgebra Lineal")
+st.title(" Calculadora Avanzada de Álgebra Lineal")
 st.caption("Proyecto Final • Universidad Mariano Gálvez (UMG)")
+
+# Función para formatear números de forma limpia (elimina decimales .00 innecesarios)
+def format_val(val):
+    if abs(val - round(val)) < 1e-4:
+        return str(int(round(val)))
+    return f"{val:.2f}"
+
+def format_df(df_input, col_names):
+    formatted_data = np.vectorize(format_val)(df_input)
+    return pd.DataFrame(formatted_data, columns=col_names)
 
 # Barra lateral con modo de operación
 with st.sidebar:
-    st.header("⚙️ Modo de Operación")
+    st.header(" Modo de Operación")
     modo = st.radio(
         "Selecciona la herramienta:",
         ("Sistema de Ecuaciones [A | C]", "Matriz Inversa [A | I]")
@@ -40,7 +50,7 @@ with st.sidebar:
     st.info("Algoritmo completo con pivoteo parcial y análisis en NumPy.")
 
 if modo == "Sistema de Ecuaciones [A | C]":
-    st.subheader("📝 Sistema de Ecuaciones Lineales")
+    st.subheader(" Sistema de Ecuaciones Lineales")
     m_eq = st.number_input("Número de Ecuaciones (filas m)", min_value=2, max_value=8, value=3, step=1)
     n_vars = st.number_input("Número de Variables (columnas n)", min_value=2, max_value=8, value=3, step=1)
     
@@ -73,7 +83,7 @@ if modo == "Sistema de Ecuaciones [A | C]":
             if abs(pivot) > 1e-12:
                 mat[r] = mat[r] / pivot
                 if abs(pivot - 1.0) > 1e-12:
-                    steps.append({"desc": f"Normalizar Fila {r+1} dividiendo entre el pivote ({pivot:.4f}).", "matrix": mat.copy()})
+                    steps.append({"desc": f"Normalizar Fila {r+1} dividiendo entre el pivote ({pivot:.2f}).", "matrix": mat.copy()})
             for i in range(m):
                 if i != r:
                     factor = mat[i, lead]
@@ -83,37 +93,37 @@ if modo == "Sistema de Ecuaciones [A | C]":
             lead += 1
         return mat, steps
 
-    if st.button("🚀 Resolver Sistema por Gauss-Jordan"):
+    if st.button(" Resolver Sistema por Gauss-Jordan"):
         try:
             final_mat, steps = gauss_jordan_sistema(edited_df.to_numpy())
             st.markdown("---")
-            st.subheader("📊 Resultados y Paso a Paso")
-            with st.expander("🔍 Ver proceso iterativo detallado", expanded=True):
+            st.subheader(" Resultados y Paso a Paso")
+            with st.expander(" Ver proceso iterativo detallado", expanded=True):
                 for idx, step in enumerate(steps):
                     st.markdown(f"**Paso {idx+1}:** {step['desc']}")
-                    st.dataframe(pd.DataFrame(step['matrix'], columns=edited_df.columns).style.format("{:.4f}"), use_container_width=True)
+                    st.dataframe(format_df(step['matrix'], edited_df.columns), use_container_width=True)
             
             rank_A = np.linalg.matrix_rank(final_mat[:, :-1], tol=1e-10)
             rank_aug = np.linalg.matrix_rank(final_mat, tol=1e-10)
             
             st.markdown("---")
             if rank_A < rank_aug:
-                st.error("❌ Sistema Inconsistente (Sin Solución).")
+                st.error(" Sistema Inconsistente (Sin Solución).")
             elif rank_A < (final_mat.shape[1] - 1):
-                st.warning("⚠️ Sistema Compatible Indeterminado (Infinitas Soluciones).")
-                st.dataframe(pd.DataFrame(final_mat, columns=edited_df.columns).style.format("{:.4f}"), use_container_width=True)
+                st.warning(" Sistema Compatible Indeterminado (Infinitas Soluciones).")
+                st.dataframe(format_df(final_mat, edited_df.columns), use_container_width=True)
             else:
-                st.success("✅ Sistema Compatible Determinado (Solución Única):")
+                st.success(" Sistema Compatible Determinado (Solución Única):")
                 solutions = final_mat[:, -1]
                 cols = st.columns(len(solutions))
                 for j, val in enumerate(solutions):
                     with cols[j % len(cols)]:
-                        st.metric(label=f"x_{j+1}", value=f"{val:.4f}")
+                        st.metric(label=f"x_{j+1}", value=format_val(val))
         except Exception as e:
             st.error(f"Error en el cálculo: {str(e)}")
 
 else:
-    st.subheader("🔄 Cálculo de Matriz Inversa [A | I]")
+    st.subheader(" Cálculo de Matriz Inversa [A | I]")
     n_dim = st.number_input("Dimensión de la matriz cuadrada (n x n)", min_value=2, max_value=5, value=2, step=1)
     
     if 'n_inv' not in st.session_state or st.session_state['n_inv'] != n_dim:
@@ -141,7 +151,7 @@ else:
             
             if abs(pivot - 1.0) > 1e-12:
                 mat[r] = mat[r] / pivot
-                steps.append({"desc": f"Normalizar Fila {r+1} dividiendo entre el pivote ({pivot:.4f}).", "matrix": mat.copy()})
+                steps.append({"desc": f"Normalizar Fila {r+1} dividiendo entre el pivote ({pivot:.2f}).", "matrix": mat.copy()})
                 
             for i in range(n):
                 if i != r:
@@ -152,30 +162,30 @@ else:
                         
         return mat, steps
 
-    if st.button("🚀 Calcular Matriz Inversa"):
+    if st.button(" Calcular Matriz Inversa"):
         try:
             A_input = matrix_A_df.to_numpy()
             det = np.linalg.det(A_input)
             
             if abs(det) < 1e-12:
-                st.error("❌ **La matriz no es invertible:** Su determinante es cero (singular).")
+                st.error(" **La matriz no es invertible:** Su determinante es cero (singular).")
             else:
-                st.success(f"✅ **Matriz Invertible:** Determinante = {det:.4f}")
+                st.success(f" **Matriz Invertible:** Determinante = {format_val(det)}")
                 final_augmented, steps_inv = gauss_jordan_inversa(A_input)
                 
                 st.markdown("---")
-                st.subheader("📊 Paso a Paso de la Matriz Aumentada [A | I]")
-                with st.expander("🔍 Ver iteraciones detalladas", expanded=True):
+                st.subheader(" Paso a Paso de la Matriz Aumentada [A | I]")
+                with st.expander(" Ver iteraciones detalladas", expanded=True):
                     col_names = [f"A_{j+1}" for j in range(n_dim)] + [f"I_{j+1}" for j in range(n_dim)]
                     for idx, step in enumerate(steps_inv):
                         st.markdown(f"**Paso {idx+1}:** {step['desc']}")
-                        st.dataframe(pd.DataFrame(step['matrix'], columns=col_names).style.format("{:.4f}"), use_container_width=True)
+                        st.dataframe(format_df(step['matrix'], col_names), use_container_width=True)
                 
                 inv_matrix = final_augmented[:, n_dim:]
                 st.markdown("---")
-                st.subheader("🎯 Resultado Final: Matriz Inversa A⁻¹")
-                st.dataframe(pd.DataFrame(inv_matrix, columns=[f"x_{j+1}" for j in range(n_dim)]).style.format("{:.4f}"), use_container_width=True)
-                st.code(str(np.round(inv_matrix, 4)))
+                st.subheader("Resultado Final: Matriz Inversa A⁻¹")
+                inv_col_names = [f"x_{j+1}" for j in range(n_dim)]
+                st.dataframe(format_df(inv_matrix, inv_col_names), use_container_width=True)
                 
         except Exception as e:
             st.error(f"Error en el cálculo de la inversa: {str(e)}")
