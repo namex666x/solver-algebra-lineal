@@ -107,7 +107,8 @@ if modo == "Sistema de Ecuaciones [A | C]":
                 solutions = final_mat[:, -1]
                 cols = st.columns(len(solutions))
                 for j, val in enumerate(solutions):
-                    cols[j % len(cols)].metric(label=f"x_{j+1}", value=f"{val:.4f}")
+                    with cols[j % len(cols)]:
+                        st.metric(label=f"x_{j+1}", value=f"{val:.4f}")
         except Exception as e:
             st.error(f"Error en el cálculo: {str(e)}")
 
@@ -124,13 +125,11 @@ else:
 
     def gauss_jordan_inversa(A):
         n = A.shape[0]
-        # Crear matriz aumentada [A | I]
         identity = np.eye(n)
         mat = np.hstack((A.astype(float), identity))
         steps = []
         
         for r in range(n):
-            # Pivoteo parcial
             max_row = r + np.argmax(np.abs(mat[r:, r]))
             if max_row != r:
                 mat[[r, max_row]] = mat[[max_row, r]]
@@ -172,7 +171,6 @@ else:
                         st.markdown(f"**Paso {idx+1}:** {step['desc']}")
                         st.dataframe(pd.DataFrame(step['matrix'], columns=col_names).style.format("{:.4f}"), use_container_width=True)
                 
-                # Extraer la matriz inversa (mitad derecha)
                 inv_matrix = final_augmented[:, n_dim:]
                 st.markdown("---")
                 st.subheader("🎯 Resultado Final: Matriz Inversa A⁻¹")
@@ -181,10 +179,3 @@ else:
                 
         except Exception as e:
             st.error(f"Error en el cálculo de la inversa: {str(e)}")
-                with cols[j % len(cols)]:
-                    st.metric(label=f"Variable x_{j+1}", value=f"{solutions[j]:.4f}")
-            
-            st.code(str(np.round(solutions, 4)))
-            
-    except Exception as e:
-        st.error(f"Ocurrió un error durante el cálculo: {str(e)}")
