@@ -113,7 +113,7 @@ if st.button(" Resolver Sistema por Gauss-Jordan"):
         st.markdown("---")
         st.subheader(" Resultados y Paso a Paso")
         
-        with st.expander("🔍 Ver proceso iterativo detallado", expanded=True):
+        with st.expander(" Ver proceso iterativo detallado", expanded=True):
             if not steps:
                 st.info("La matriz ya se encuentra en su forma escalonada reducida.")
             for idx, step in enumerate(steps):
