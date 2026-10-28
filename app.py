@@ -40,7 +40,7 @@ with st.sidebar:
     st.info("Algoritmo de Eliminación de Gauss-Jordan con Pivoteo Parcial y NumPy.")
 
 # Sección de entrada de datos
-st.subheader("📝 Matriz Aumentada [A | C]")
+st.subheader(" Matriz Aumentada [A | C]")
 st.write(f"Introduce los coeficientes del sistema de {m_eq} ecuaciones y {n_vars} incógnitas.")
 
 # Inicializar estado de la matriz
@@ -104,14 +104,14 @@ def gauss_jordan_con_pasos(augmented_matrix):
     return mat, steps
 
 # Botón de ejecución
-if st.button("🚀 Resolver Sistema por Gauss-Jordan"):
+if st.button(" Resolver Sistema por Gauss-Jordan"):
     raw_matrix = edited_df.to_numpy()
     
     try:
         final_mat, steps = gauss_jordan_con_pasos(raw_matrix)
         
         st.markdown("---")
-        st.subheader("📊 Resultados y Paso a Paso")
+        st.subheader(" Resultados y Paso a Paso")
         
         with st.expander("🔍 Ver proceso iterativo detallado", expanded=True):
             if not steps:
@@ -129,15 +129,15 @@ if st.button("🚀 Resolver Sistema por Gauss-Jordan"):
         rank_aug = np.linalg.matrix_rank(final_mat, tol=1e-10)
         
         st.markdown("---")
-        st.subheader("🎯 Conclusión del Sistema")
+        st.subheader(" Conclusión del Sistema")
         
         if rank_A < rank_aug:
-            st.error("❌ **Sistema Inconsistente (Sin Solución):** El sistema presenta contradicciones matemáticas.")
+            st.error(" **Sistema Inconsistente (Sin Solución):** El sistema presenta contradicciones matemáticas.")
         elif rank_A < n_vars_count:
-            st.warning("⚠️ **Sistema Compatible Indeterminado (Infinitas Soluciones):** El sistema posee variables libres.")
+            st.warning(" **Sistema Compatible Indeterminado (Infinitas Soluciones):** El sistema posee variables libres.")
             st.dataframe(pd.DataFrame(final_mat, columns=edited_df.columns).style.format("{:.4f}"), use_container_width=True)
         else:
-            st.success("✅ **Sistema Compatible Determinado (Solución Única):**")
+            st.success(" **Sistema Compatible Determinado (Solución Única):**")
             solutions = final_mat[:, -1]
             
             cols = st.columns(min(n_vars_count, 4))
