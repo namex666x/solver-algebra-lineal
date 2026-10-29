@@ -30,6 +30,10 @@ st.title("Calculadora Avanzada de Álgebra Lineal")
 st.caption("Proyecto Final • Universidad Mariano Gálvez (UMG)")#------------
 
 # Función para formatear números de forma limpia
+def format_val(val):
+    if abs(val - round(val)) < 1e-4:
+        return str(int(round(val)))
+    return f"{val:.2f}"
 
 
 def format_df(df_input, col_names):
