@@ -5,7 +5,7 @@ import pandas as pd
 # Configuración de la página
 st.set_page_config(
     page_title="Solver Lineal Pro | Álgebra Lineal",
-    page_icon="📐",
+    page_icon="👑",
     layout="wide"
 )
 
@@ -27,13 +27,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("Calculadora Avanzada de Álgebra Lineal")
-st.caption("Proyecto Final • Universidad Mariano Gálvez (UMG)")
+st.caption("Proyecto Final • Universidad Mariano Gálvez (UMG)")#------------
 
-# Función para formatear números de forma limpia (elimina decimales .00 innecesarios)
-def format_val(val):
-    if abs(val - round(val)) < 1e-4:
-        return str(int(round(val)))
-    return f"{val:.2f}"
+# Función para formatear números de forma limpia
+
 
 def format_df(df_input, col_names):
     formatted_data = np.vectorize(format_val)(df_input)
@@ -47,7 +44,7 @@ with st.sidebar:
         ("Sistema de Ecuaciones [A | C]", "Matriz Inversa [A | I]")
     )
     st.markdown("---")
-    st.info("Algoritmo completo con pivoteo parcial y análisis en NumPy.")
+    st.info("Algoritmo completo con pivoteo parcial y análisis en NumPy.")#----------
 
 if modo == "Sistema de Ecuaciones [A | C]":
     st.subheader(" Sistema de Ecuaciones Lineales")
@@ -59,7 +56,7 @@ if modo == "Sistema de Ecuaciones [A | C]":
         st.session_state['n_sys'] = n_vars
         st.session_state['df_sys'] = pd.DataFrame(np.zeros((m_eq, n_vars + 1)), columns=[f"x_{j+1}" for j in range(n_vars)] + ["| C"])
 
-    edited_df = st.data_editor(st.session_state['df_sys'], use_container_width=True)
+    edited_df = st.data_editor(st.session_state['df_sys'], use_container_width=True)#------
 
     def gauss_jordan_sistema(matriz):
         mat = matriz.astype(float).copy()
@@ -91,7 +88,7 @@ if modo == "Sistema de Ecuaciones [A | C]":
                         mat[i] = mat[i] - factor * mat[r]
                         steps.append({"desc": f"Eliminación en Fila {i+1} usando Fila {r+1}.", "matrix": mat.copy()})
             lead += 1
-        return mat, steps
+        return mat, steps#------------------
 
     if st.button(" Resolver Sistema por Gauss-Jordan"):
         try:
@@ -120,7 +117,7 @@ if modo == "Sistema de Ecuaciones [A | C]":
                     with cols[j % len(cols)]:
                         st.metric(label=f"x_{j+1}", value=format_val(val))
         except Exception as e:
-            st.error(f"Error en el cálculo: {str(e)}")
+            st.error(f"Error en el cálculo: {str(e)}")#---------------------
 
 else:
     st.subheader("Cálculo de Matriz Inversa [A | I]")
